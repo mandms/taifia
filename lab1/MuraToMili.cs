@@ -10,13 +10,14 @@ namespace lab1
         private List<List<string>> _transactions = new List<List<string>>();
         private string _inputFilename;
         private string _outputFilename;
+
         public MuraToMili(string inputFilename, string outputFilename)
         {
             _inputFilename = inputFilename;
             _outputFilename = outputFilename;
         }
 
-        public void ReadFile()
+        private void ReadFile()
         {
             string[] lines = File.ReadAllLines(_inputFilename);
 
@@ -38,8 +39,12 @@ namespace lab1
             }
         }
 
+        void ClearFile() => File.WriteAllText(_outputFilename, string.Empty);
+
         public void MoveToMili()
         {
+            ReadFile();
+
             for (int i = 0; i < _transactions.Count; i++)
             {
                 for (int j = 0; j < _transactions[i].Count; j++)
@@ -51,11 +56,15 @@ namespace lab1
                     }
                 }
             }
+
+            ClearFile();
+            WriteHeader();
+            WriteTransactions();
         }
 
         private void WriteHeader()
         {
-            foreach (string output in _statesOutputsPairs.Values)
+            foreach (string output in _statesOutputsPairs.Keys)
             {
                 File.AppendAllText(_outputFilename, $";{output}");
             }
@@ -67,20 +76,14 @@ namespace lab1
             for (int i = 0; i < _transactions.Count; i++)
             {
                 List<string> transactionsLine = _transactions[i];
-                File.AppendAllText(_outputFilename, $"z{i}");
+                File.AppendAllText(_outputFilename, $"z{i + 1}");
 
                 foreach (string transaction in transactionsLine)
                 {
                     File.AppendAllText(_outputFilename, $";{transaction}");
                 }
+                File.AppendAllText(_outputFilename, "\n");
             }
         }
-
-        public void WriteToFile()
-        {
-            WriteHeader();
-            WriteToFile();
-        }
-
     }
 }
